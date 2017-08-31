@@ -1,0 +1,52 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+ 
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.header import Header
+
+# Third part SMTP service
+mail_host = "smtp.163.com" # set_up service
+mail_user = "xxx@163.com" #user
+mail_pass = "xxx" #password
+ 
+sender = 'xxx@163.com'
+receivers = ['xxxx@163.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
+ 
+#创建一个带附件的实例
+message = MIMEMultipart()
+message['From'] = Header("Maderstand", 'utf-8')
+message['To'] =  Header("Maderstand_one", 'utf-8')
+subject = 'PythonSMTP Test'
+message['Subject'] = Header(subject, 'utf-8')
+ 
+#邮件正文内容
+message.attach(MIMEText("""
+
+这是Python 邮件发送测试……
+我多写一行是为了看看
+这样写
+行不行。""", 'plain', 'utf-8'))
+ 
+# 构造附件1，传送当前目录下的 test.txt 文件
+att1 = MIMEText(open('F:\\temp\\', 'rb').read(), 'base64', 'utf-8')
+att1["Content-Type"] = 'application/octet-stream'
+# 这里的filename可以任意写，写什么名字，邮件中显示什么名字
+att1["Content-Disposition"] = 'attachment; filename="python_smtp_test.txt"'
+message.attach(att1)
+ 
+"""# 构造附件2，传送当前目录下的 runoob.txt 文件
+att2 = MIMEText(open('runoob.txt', 'rb').read(), 'base64', 'utf-8')
+att2["Content-Type"] = 'application/octet-stream'
+att2["Content-Disposition"] = 'attachment; filename="runoob.txt"'
+message.attach(att2)
+"""
+try:
+    smtpObj = smtplib.SMTP()
+    smtpObj.connect(mail_host,25) # SMTP port Num
+    smtpObj.login(mail_user,mail_pass)
+    smtpObj.sendmail(sender, receivers, message.as_string())
+    print ("邮件发送成功")
+except smtplib.SMTPException:
+    print ("Error: 无法发送邮件")
